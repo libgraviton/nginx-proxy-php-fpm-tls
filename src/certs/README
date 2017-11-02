@@ -1,0 +1,1 @@
+this is a self signed dummy cert so that nginx can start if only in http mode
