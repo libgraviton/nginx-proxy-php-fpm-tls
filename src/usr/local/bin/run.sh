@@ -1,9 +1,7 @@
 #!/bin/ash
 
 # php-fpm proxy mode
-if [ -z ${FPM_UPSTREAM+x} ] && [ -z ${FPM_PATH+x} ]; then
-    echo "FPM configuration not given, skipping.."
-else
+if [ ! -z ${FPM_UPSTREAM+x} ] && [ ! -z ${FPM_PATH+x} ]; then
     # replace the configured fpm upstream by env
     sed -i 's@FPMUPSTREAMHOSTNAME@'"$FPM_UPSTREAM"'@' /etc/nginx/templates/upstream-fpm-upstream.conf
 
@@ -21,9 +19,7 @@ else
 fi
 
 # normal forward proxy mode
-if [ -z ${PROXY_URL+x} ]; then
-    echo "HTTP Proxy configuration not given, skipping.."
-else
+if [ ! -z ${PROXY_URL+x} ]; then
     # replace FPM path (filename of upstream)
     sed -i 's@PROXYURL@'"$PROXY_URL"'@' /etc/nginx/templates/upstream-standard-server.conf
 
@@ -32,9 +28,7 @@ else
 fi
 
 # tls client cert
-if [ -z ${CLIENT_TLS_CERT+x} ]; then
-    echo "No client TLS cert given, skipping.."
-else
+if [ ! -z ${CLIENT_TLS_CERT+x} ]; then
     # client tls cert
     sed -i 's@CLIENTTLSCERT@'"$CLIENT_TLS_CERT"'@g' /etc/nginx/templates/tls-cert-auth.conf
 
@@ -48,5 +42,8 @@ sed -i 's@CONDITIONALBASICAUTH@'"$ENABLE_CONDITIONAL_BASIC_AUTH"'@' /etc/nginx/c
 # ssl cert paths
 sed -i 's@SSLCERTPATH@'"$SSL_CERT"'@' /etc/nginx/conf.d/dynamic/variables/ssl_certs.conf
 sed -i 's@SSLCERTKEYPATH@'"$SSL_CERT_KEY"'@' /etc/nginx/conf.d/dynamic/variables/ssl_certs.conf
+
+# timeout
+sed -i 's@KEEPALIVETIMEOUT@'"$KEEPALIVE_TIMEOUT"'@' /etc/nginx/nginx.conf
 
 exec "$@"

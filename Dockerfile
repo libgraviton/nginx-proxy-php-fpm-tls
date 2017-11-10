@@ -7,6 +7,8 @@ ADD src /
 ENV SSL_CERT=/certs/fullchain.crt
 ENV SSL_CERT_KEY=/certs/fullchain.key
 ENV FPM_STATIC_WEBROOT=/var/www/web/
+ENV ENABLE_CONDITIONAL_BASIC_AUTH=false
+ENV KEEPALIVE_TIMEOUT=200
 
 RUN apt-get update && \
     apt-get upgrade -y && \
