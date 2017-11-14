@@ -1,5 +1,10 @@
 #!/bin/ash
 
+if [ ! -z ${BASIC_USERNAME+x} ] && [ ! -z ${BASIC_PASSWORD+x} ]; then
+    htpasswd -D /etc/nginx/passwd user
+    htpasswd -b /etc/nginx/passwd ${BASIC_USERNAME} ${BASIC_PASSWORD}
+fi
+
 # php-fpm proxy mode
 if [ ! -z ${FPM_UPSTREAM+x} ] && [ ! -z ${FPM_PATH+x} ]; then
     # replace the configured fpm upstream by env
