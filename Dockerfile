@@ -12,6 +12,7 @@ ENV KEEPALIVE_TIMEOUT=200
 
 RUN apt-get update && \
     apt-get upgrade -y && \
+    apt-get install -y apache2-utils && \
     apt-get clean && \
 
     rm -Rf /usr/share/nginx/html/ && \
