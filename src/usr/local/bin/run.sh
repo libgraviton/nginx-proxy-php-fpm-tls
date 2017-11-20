@@ -51,4 +51,18 @@ sed -i 's@SSLCERTKEYPATH@'"$SSL_CERT_KEY"'@' /etc/nginx/conf.d/dynamic/variables
 # timeout
 sed -i 's@KEEPALIVETIMEOUT@'"$KEEPALIVE_TIMEOUT"'@' /etc/nginx/nginx.conf
 
+# location rules
+COUNTER=1
+
+for var in ${!RULES_*}; do
+    IFS='#' read -ra ADDR <<< "${!var}"
+
+    sed 's@THELOCATION@'"${ADDR[0]}"'@' /etc/nginx/templates/location-rule.conf > /tmp/config
+    sed -i 's@THEMETHODS@'"${ADDR[1]}"'@' /tmp/config
+
+    mv /tmp/config /etc/nginx/conf.d/dynamic/variables/rule-${COUNTER}.conf
+
+    COUNTER=$[COUNTER+1]
+done
+
 exec "$@"
