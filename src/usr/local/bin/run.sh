@@ -57,12 +57,14 @@ COUNTER=1
 for var in ${!RULES_*}; do
     IFS='#' read -ra ADDR <<< "${!var}"
 
-    sed 's@THELOCATION@'"${ADDR[0]}"'@' /etc/nginx/templates/location-rule.conf > /tmp/config
-    sed -i 's@THEMETHODS@'"${ADDR[1]}"'@' /tmp/config
+    if [ ! -z "${ADDR[0]}" ] && [ ! -z "${ADDR[0]}" ]; then
+        sed 's@THELOCATION@'"${ADDR[0]}"'@' /etc/nginx/templates/location-rule.conf > /tmp/config
+        sed -i 's@THEMETHODS@'"${ADDR[1]}"'@' /tmp/config
 
-    mv /tmp/config /etc/nginx/conf.d/dynamic/variables/rule-${COUNTER}.conf
+        mv /tmp/config /etc/nginx/conf.d/dynamic/variables/rule-${COUNTER}.conf
 
-    COUNTER=$[COUNTER+1]
+        COUNTER=$[COUNTER+1]
+    fi
 done
 
 exec "$@"
