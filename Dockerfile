@@ -9,6 +9,8 @@ ENV SSL_CERT_KEY=/certs/fullchain.key
 ENV FPM_STATIC_WEBROOT=/var/www/web/
 ENV ENABLE_CONDITIONAL_BASIC_AUTH=false
 ENV KEEPALIVE_TIMEOUT=200
+ENV PROXY_STANDARD_FORWARD_PROTO="\$scheme"
+ENV PROXY_STANDARD_FORWARD_PORT="\$server_port"
 
 RUN apt-get update && \
     apt-get upgrade -y && \

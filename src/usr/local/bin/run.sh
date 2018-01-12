@@ -27,6 +27,8 @@ fi
 if [ ! -z ${PROXY_URL+x} ]; then
     # replace FPM path (filename of upstream)
     sed -i 's@PROXYURL@'"$PROXY_URL"'@' /etc/nginx/templates/upstream-standard-server.conf
+    sed -i 's@FORWARDPROTO@'"$PROXY_STANDARD_FORWARD_PROTO"'@' /etc/nginx/templates/upstream-standard-server.conf
+    sed -i 's@FORWARDPORT@'"$PROXY_STANDARD_FORWARD_PORT"'@' /etc/nginx/templates/upstream-standard-server.conf
 
     # the server block relevant part to its final destination
     cp /etc/nginx/templates/upstream-standard-server.conf /etc/nginx/conf.d/dynamic/proxy.conf
