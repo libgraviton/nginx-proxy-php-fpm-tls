@@ -5,6 +5,8 @@ if [ ! -z ${BASIC_USERNAME+x} ] && [ ! -z ${BASIC_PASSWORD+x} ]; then
     htpasswd -b /etc/nginx/passwd ${BASIC_USERNAME} ${BASIC_PASSWORD}
 fi
 
+PROXYMODE=none
+
 # php-fpm proxy mode
 if [ ! -z ${FPM_UPSTREAM+x} ] && [ ! -z ${FPM_PATH+x} ]; then
     # replace the configured fpm upstream by env
@@ -20,7 +22,9 @@ if [ ! -z ${FPM_UPSTREAM+x} ] && [ ! -z ${FPM_PATH+x} ]; then
     cp /etc/nginx/templates/upstream-fpm-upstream.conf /etc/nginx/conf.d/dynamic/upstreams/upstream.conf
 
     # the server block relevant part to its final destination
-    cp /etc/nginx/templates/upstream-fpm-server.conf /etc/nginx/conf.d/dynamic/proxy.conf
+    cp /etc/nginx/templates/proxies/upstream-fpm-server.conf /etc/nginx/conf.d/dynamic/proxy.conf
+
+    PROXYMODE=fpm
 fi
 
 # normal forward proxy mode
@@ -31,7 +35,9 @@ if [ ! -z ${PROXY_URL+x} ]; then
     sed -i 's@FORWARDPORT@'"$PROXY_STANDARD_FORWARD_PORT"'@' /etc/nginx/templates/upstream-standard-server.conf
 
     # the server block relevant part to its final destination
-    cp /etc/nginx/templates/upstream-standard-server.conf /etc/nginx/conf.d/dynamic/proxy.conf
+    cp /etc/nginx/templates/proxies/upstream-standard-server.conf /etc/nginx/conf.d/dynamic/proxy.conf
+
+    PROXYMODE=standard
 fi
 
 # tls client cert
