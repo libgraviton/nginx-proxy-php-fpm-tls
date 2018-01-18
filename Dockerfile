@@ -12,7 +12,7 @@ ENV PROXY_STANDARD_FORWARD_PORT="\$server_port"
 # envs for conditional basic auth settings
 ENV CONDITIONAL_BASIC_AUTH_HEADER="http_x_forwarded_for"
 ENV CONDITIONAL_BASIC_AUTH_REGEX="~172\..*"
-ENV BASIC_AUTH_PASSTHROUGH="NO"
+ENV EXPOSE_PATH "/"
 
 ADD src /
 

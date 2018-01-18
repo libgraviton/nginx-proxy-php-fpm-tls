@@ -4,8 +4,11 @@ PROXYMODE=none
 
 # php-fpm proxy mode
 if [ ! -z ${FPM_UPSTREAM+x} ] && [ ! -z ${FPM_PATH+x} ]; then
+
     # replace the configured fpm upstream by env
     sed -i 's@FPMUPSTREAMHOSTNAME@'"$FPM_UPSTREAM"'@' /etc/nginx/templates/global/upstream-fpm-upstream.conf
+
+    sed -i 's@EXPOSEPATH@'"$EXPOSE_PATH"'@' /etc/nginx/templates/proxies/upstream-fpm-server.conf
 
     # replace FPM path (filename of upstream)
     sed -i 's@FPMUPSTREAMPATH@'"$FPM_PATH"'@' /etc/nginx/templates/proxies/upstream-fpm-server.conf
@@ -25,6 +28,7 @@ fi
 # normal forward proxy mode
 if [ ! -z ${PROXY_URL+x} ]; then
     # replace FPM path (filename of upstream)
+    sed -i 's@EXPOSEPATH@'"$EXPOSE_PATH"'@' /etc/nginx/templates/proxies/upstream-standard-server.conf
     sed -i 's@PROXYURL@'"$PROXY_URL"'@' /etc/nginx/templates/proxies/upstream-standard-server.conf
     sed -i 's@FORWARDPROTO@'"$PROXY_STANDARD_FORWARD_PROTO"'@' /etc/nginx/templates/proxies/upstream-standard-server.conf
     sed -i 's@FORWARDPORT@'"$PROXY_STANDARD_FORWARD_PORT"'@' /etc/nginx/templates/proxies/upstream-standard-server.conf
