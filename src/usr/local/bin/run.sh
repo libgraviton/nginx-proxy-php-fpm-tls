@@ -51,7 +51,8 @@ if [ ! -z ${BASIC_USERNAME+x} ] && [ ! -z ${BASIC_PASSWORD+x} ]; then
 
     # conditional basic auth
     if [[ $ENABLE_CONDITIONAL_BASIC_AUTH = "YES" ]]; then
-        # todo: regex from env
+        sed -i 's@CONDITIONALBASICAUTHHEADER@'"$CONDITIONAL_BASIC_AUTH_HEADER"'@' /etc/nginx/templates/global/basic_auth_conditional.conf
+        sed -i 's@CONDITIONALBASICAUTHREGEX@'"$CONDITIONAL_BASIC_AUTH_REGEX"'@' /etc/nginx/templates/global/basic_auth_conditional.conf
         cp /etc/nginx/templates/global/basic_auth_conditional.conf /etc/nginx/conf.d/dynamic/global/
     else
         cp /etc/nginx/templates/global/basic_auth_on.conf /etc/nginx/conf.d/dynamic/global/
