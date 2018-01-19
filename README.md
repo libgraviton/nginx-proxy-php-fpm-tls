@@ -60,9 +60,12 @@ to use your real certificates.
 
 ### Basic authentication
 
-The default username/password is user/thepassword.
+You can activate basic auth by setting the `BASIC_USERNAME` and `BASIC_PASSWORD` ENV variables.
 
-You can override the user file located in `/etc/nginx/passwd` if you want to change that. You should change that.
+If you set `ENABLE_CONDITIONAL_BASIC_AUTH` to the value `YES`, then basic auth will **only** be needed
+for users that **do not** match the value of env `CONDITIONAL_BASIC_AUTH_REGEX` (defaults to `~172\..*`)
+in the nginx variable defined by `CONDITIONAL_BASIC_AUTH_HEADER` (defaults to `http_x_forwarded_for`). Another
+common value for `CONDITIONAL_BASIC_AUTH_HEADER` is `remote_addr` as it cannot easily spoofed.
 
 ## OpenShift compatibility
 
