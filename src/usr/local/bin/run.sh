@@ -72,6 +72,10 @@ sed -i 's@SSLCERTKEYPATH@'"$SSL_CERT_KEY"'@' /etc/nginx/conf.d/dynamic/server/ss
 # timeout
 sed -i 's@KEEPALIVETIMEOUT@'"$KEEPALIVE_TIMEOUT"'@' /etc/nginx/nginx.conf
 
+# basic stuff
+sed -i 's@GZIPENABLED@'"$GZIP_ENABLED"'@' /etc/nginx/conf.d/default.conf
+sed -i 's@GZIPTYPES@'"$GZIP_TYPES"'@' /etc/nginx/conf.d/default.conf
+
 # location rules
 COUNTER=1
 
