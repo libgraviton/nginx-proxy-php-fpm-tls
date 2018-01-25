@@ -16,9 +16,6 @@ if [ ! -z ${FPM_UPSTREAM+x} ] && [ ! -z ${FPM_PATH+x} ]; then
     # replace local static webroot
     sed -i 's@FPMSTATICWEBROOT@'"$FPM_STATIC_WEBROOT"'@' /etc/nginx/templates/proxies/upstream-fpm-server.conf
 
-    # copy the php upstream block to its final destination
-    cp /etc/nginx/templates/global/upstream-fpm-upstream.conf /etc/nginx/conf.d/dynamic/global/upstream.conf
-
     # the server block relevant part to its final destination
     cp /etc/nginx/templates/proxies/upstream-fpm-server.conf /etc/nginx/conf.d/dynamic/proxy.conf
 
