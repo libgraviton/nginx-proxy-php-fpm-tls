@@ -15,6 +15,7 @@ ENV GZIP_TYPES="application/json application/schema+json application/javascript 
 ENV CONDITIONAL_BASIC_AUTH_HEADER="http_x_forwarded_for"
 ENV CONDITIONAL_BASIC_AUTH_REGEX="~172\..*"
 ENV EXPOSE_PATH "/"
+ENV ENVIRONMENT_JSON_PREFIX "ADMIN_"
 
 ADD src /
 
@@ -29,9 +30,10 @@ RUN apt-get update && \
     ln -s /bin/bash /bin/ash && \
     touch /var/log/nginx/access.log && \
     touch /var/log/nginx/error.log && \
+    mkdir /var/www && \
     # chmod conf dir so www-data can write to
-    chown -R www-data:root /etc/nginx/ /usr/local/bin/run.sh /var/log/nginx/ /var/run/ /var/cache/nginx/ && \
-    chmod -R go+rwx /etc/nginx/ /usr/local/bin/run.sh /var/log/nginx/ /var/run/ /var/cache/nginx/ && \
+    chown -R www-data:root /var/www/ /etc/nginx/ /usr/local/bin/run.sh /var/log/nginx/ /var/run/ /var/cache/nginx/ && \
+    chmod -R go+rwx /var/www/ /etc/nginx/ /usr/local/bin/run.sh /var/log/nginx/ /var/run/ /var/cache/nginx/ && \
     chmod +x /usr/local/bin/run.sh
 
 USER www-data
