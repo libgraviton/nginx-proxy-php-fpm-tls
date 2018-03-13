@@ -10,12 +10,13 @@ ENV KEEPALIVE_TIMEOUT=200
 ENV PROXY_STANDARD_FORWARD_PROTO="\$scheme"
 ENV PROXY_STANDARD_FORWARD_PORT="\$server_port"
 ENV GZIP_ENABLED="on"
-ENV GZIP_TYPES="application/json application/schema+json application/javascript text/xml text/css text/x-gettext-translation"
+ENV GZIP_TYPES="text/css text/plain text/javascript application/javascript application/json application/x-javascript text/xml application/xml application/xml+rss application/xhtml+xml application/x-font-ttf application/x-font-opentype application/vnd.ms-fontobject image/svg+xml image/x-icon application/rss+xml application/atom_xml text/x-gettext-translation"
 # envs for conditional basic auth settings
 ENV CONDITIONAL_BASIC_AUTH_HEADER="http_x_forwarded_for"
 ENV CONDITIONAL_BASIC_AUTH_REGEX="~172\..*"
 ENV EXPOSE_PATH "/"
 ENV ENVIRONMENT_JSON_PREFIX "ADMIN_"
+ENV DEFAULT_SERVE "none"
 
 ADD src /
 

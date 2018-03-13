@@ -39,6 +39,12 @@ fi
 # no proxymode? then make static hosting to /var/www
 if [ "${PROXYMODE}" = "none" ]; then
     cp /etc/nginx/templates/proxies/static-root.conf /etc/nginx/conf.d/dynamic/proxy.conf
+
+    # default serve file?
+    if [ ! "${DEFAULT_SERVE}" = "none" ]; then
+        sed -i 's@DEFAULTSERVE@'"$DEFAULT_SERVE"'@g' /etc/nginx/templates/location/default_serve.conf
+        cp /etc/nginx/templates/location/default_serve.conf /etc/nginx/conf.d/dynamic/location/
+    fi
 fi
 
 # tls client cert
