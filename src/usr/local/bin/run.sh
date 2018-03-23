@@ -2,6 +2,12 @@
 
 PROXYMODE=none
 
+## basics
+# resolver
+sed -i 's@THERESOLVER@'"$RESOLVER"'@' /etc/nginx/conf.d/default.conf
+sed -i 's@THESERVERNAME@'"$SERVERNAME"'@' /etc/nginx/conf.d/default.conf
+sed -i 's@RESOLVERVALID@'"$RESOLVER_VALID"'@' /etc/nginx/conf.d/default.conf
+
 # php-fpm proxy mode
 if [ ! -z ${FPM_UPSTREAM+x} ] && [ ! -z ${FPM_PATH+x} ]; then
 

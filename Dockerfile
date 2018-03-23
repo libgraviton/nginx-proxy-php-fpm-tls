@@ -2,6 +2,10 @@ FROM nginx:1.13
 ARG TAG
 LABEL TAG=${TAG}
 
+ENV RESOLVER=127.0.0.11
+ENV RESOLVER_VALID=30s
+ENV SERVERNAME=localhost
+
 ENV SSL_CERT=/certs/fullchain.crt
 ENV SSL_CERT_KEY=/certs/fullchain.key
 ENV FPM_STATIC_WEBROOT=/var/www/web/
