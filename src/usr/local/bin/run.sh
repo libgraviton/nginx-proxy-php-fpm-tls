@@ -65,6 +65,8 @@ if [ ! "${RESOLVER}" = "none" ]; then
     sed -i 's@RESOLVERVALID@'"$RESOLVER_VALID"'@' /etc/nginx/templates/server/resolver.conf
 
     cp /etc/nginx/templates/server/resolver.conf /etc/nginx/conf.d/dynamic/server/resolver.conf
+else
+    echo resolver $(awk 'BEGIN{ORS=" "} $1=="nameserver" {print $2}' /etc/resolv.conf) " valid=${RESOLVER_VALID};" > /etc/nginx/conf.d/dynamic/server/resolver.conf
 fi
 
 # basic auth stuff
