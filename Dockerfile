@@ -2,7 +2,9 @@ FROM nginx:1.13
 ARG TAG
 LABEL TAG=${TAG}
 
-ENV RESOLVER=127.0.0.11
+ENV TINI_VERSION v0.18.0
+
+ENV RESOLVER=none
 ENV RESOLVER_VALID=30s
 ENV SERVERNAME=localhost
 
@@ -23,6 +25,7 @@ ENV ENVIRONMENT_JSON_PREFIX "ADMIN_"
 ENV DEFAULT_SERVE "none"
 
 ADD src /
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 
 RUN apt-get update && \
     apt-get upgrade -y && \
@@ -39,10 +42,12 @@ RUN apt-get update && \
     # chmod conf dir so www-data can write to
     chown -R www-data:root /var/www/ /etc/nginx/ /usr/local/bin/run.sh /var/log/nginx/ /var/run/ /var/cache/nginx/ && \
     chmod -R go+rwx /var/www/ /etc/nginx/ /usr/local/bin/run.sh /var/log/nginx/ /var/run/ /var/cache/nginx/ && \
-    chmod +x /usr/local/bin/run.sh
+    chmod +x /usr/local/bin/run.sh && \
+    chmod +x /tini
 
 USER www-data
 
 EXPOSE 9080 9443
 
+ENTRYPOINT ["/tini", "--"]
 CMD ["/usr/local/bin/run.sh", "nginx", "-g", "daemon off;"]
