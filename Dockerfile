@@ -1,4 +1,4 @@
-FROM nginx:1.13
+FROM nginx:1.14
 ARG TAG
 LABEL TAG=${TAG}
 
