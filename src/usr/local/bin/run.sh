@@ -3,10 +3,7 @@
 PROXYMODE=none
 
 ## basics
-# resolver
-sed -i 's@THERESOLVER@'"$RESOLVER"'@' /etc/nginx/conf.d/default.conf
 sed -i 's@THESERVERNAME@'"$SERVERNAME"'@' /etc/nginx/conf.d/default.conf
-sed -i 's@RESOLVERVALID@'"$RESOLVER_VALID"'@' /etc/nginx/conf.d/default.conf
 
 # php-fpm proxy mode
 if [ ! -z ${FPM_UPSTREAM+x} ] && [ ! -z ${FPM_PATH+x} ]; then
@@ -60,6 +57,14 @@ if [ ! -z ${CLIENT_TLS_CERT+x} ]; then
 
     # the server block relevant part to its final destination
     cp /etc/nginx/templates/server/tls-cert-auth.conf /etc/nginx/conf.d/dynamic/server/zz-tls-cert-auth.conf
+fi
+
+# docker resolver set
+if [ ! "${RESOLVER}" = "none" ]; then
+    sed -i 's@THERESOLVER@'"$RESOLVER"'@' /etc/nginx/templates/server/resolver.conf
+    sed -i 's@RESOLVERVALID@'"$RESOLVER_VALID"'@' /etc/nginx/templates/server/resolver.conf
+
+    cp /etc/nginx/templates/server/resolver.conf /etc/nginx/conf.d/dynamic/server/resolver.conf
 fi
 
 # basic auth stuff
