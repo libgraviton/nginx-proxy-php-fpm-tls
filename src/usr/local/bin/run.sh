@@ -19,6 +19,9 @@ if [ ! -z ${FPM_UPSTREAM+x} ] && [ ! -z ${FPM_PATH+x} ]; then
     # replace local static webroot
     sed -i 's@FPMSTATICWEBROOT@'"$FPM_STATIC_WEBROOT"'@' /etc/nginx/templates/proxies/upstream-fpm-server.conf
 
+    # replace status page allowed range
+    sed -i 's@FPMSTATUSALLOWEDNETWORK@'"$FPM_STATUS_ALLOWED_NETWORK"'@' /etc/nginx/templates/proxies/upstream-fpm-server.conf
+
     # the server block relevant part to its final destination
     cp /etc/nginx/templates/proxies/upstream-fpm-server.conf /etc/nginx/conf.d/dynamic/proxy.conf
 
