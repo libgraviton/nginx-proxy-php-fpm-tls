@@ -1,8 +1,15 @@
+# install our php stuff
+FROM composer:1.8.0
+COPY src/configurator /app
+RUN cd /app && \
+    composer install --ignore-platform-reqs --no-scripts
+
 FROM nginx:1.15
 ARG TAG
 LABEL TAG=${TAG}
 
 ENV TINI_VERSION v0.18.0
+ENV DEBIAN_FRONTEND noninteractive
 
 ENV RESOLVER=none
 ENV RESOLVER_VALID=30s
@@ -25,12 +32,11 @@ ENV EXPOSE_PATH "/"
 ENV ENVIRONMENT_JSON_PREFIX "ADMIN_"
 ENV DEFAULT_SERVE "none"
 
-ADD src /
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y apache2-utils && \
+    TERM=xterm apt-get install -y apache2-utils curl php-cli && \
     apt-get clean && \
     rm -Rf /usr/share/nginx/html/ && \
     # add www-data to root group (openshift requirement)
@@ -39,9 +45,13 @@ RUN apt-get update && \
     ln -s /bin/bash /bin/ash && \
     touch /var/log/nginx/access.log && \
     touch /var/log/nginx/error.log && \
-    mkdir /var/www && \
-    # chmod conf dir so www-data can write to
-    chown -R www-data:root /var/www/ /etc/nginx/ /usr/local/bin/run.sh /var/log/nginx/ /var/run/ /var/cache/nginx/ && \
+    mkdir /var/www
+
+ADD src /
+COPY --from=0 /app /opt/configurator
+
+# chmod conf dir so www-data can write to
+RUN chown -R www-data:root /var/www/ /etc/nginx/ /usr/local/bin/run.sh /var/log/nginx/ /var/run/ /var/cache/nginx/ && \
     chmod -R go+rwx /var/www/ /etc/nginx/ /usr/local/bin/run.sh /var/log/nginx/ /var/run/ /var/cache/nginx/ && \
     chmod +x /usr/local/bin/run.sh && \
     chmod +x /tini
