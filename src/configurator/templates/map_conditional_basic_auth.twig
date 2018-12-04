@@ -1,6 +1,6 @@
 # if x-forwarded-for is present in any form, we want to have basic auth, off otherwise
-map $CONDITIONALBASICAUTHHEADER $authentication {
+map {{ CONDITIONAL_BASIC_AUTH_HEADER }} $authentication_conditional {
     default    "authentication_realm";
     # whitelisted regex - hosts matching this one will have no basic auth
-    "CONDITIONALBASICAUTHREGEX"   "off";
+    "{{ CONDITIONAL_BASIC_AUTH_REGEX }}"   "off";
 }
