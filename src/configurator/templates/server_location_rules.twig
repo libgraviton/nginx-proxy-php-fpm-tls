@@ -1,0 +1,8 @@
+{% for rule in vhost.LOCATION_RULES %}
+    location {{ rule.path }} {
+        try_files $uri $uri/ @upstream;
+        limit_except OPTIONS {{ rule.method }} {
+            deny all;
+        }
+    }
+{% endfor %}

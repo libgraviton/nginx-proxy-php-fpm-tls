@@ -1,0 +1,9 @@
+root /var/www;
+
+location / {
+    index index.html;
+{% if vhost.DEFAULT_SERVE != "none" %}
+    # redirect everything that does not exist to our entrypoint
+    try_files $uri /{{ vhost.DEFAULT_SERVE }};
+{% endif %}
+}

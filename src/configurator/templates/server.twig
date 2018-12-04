@@ -1,0 +1,71 @@
+server {
+    listen 9080;
+    listen 9443 ssl {% if vhostCounter == 0 %}default_server{% endif %}{% if ENABLE_HTTP2 == "true" %} http2{% endif %};
+
+    ssl_certificate {{ SSL_CERT }};
+    ssl_certificate_key {{ SSL_CERT_KEY }};
+    ssl_session_cache shared:SSL:20m;
+    ssl_session_timeout 90m;
+
+    server_name {{ vhost.SERVERNAME }};
+    server_tokens off;
+
+{% if vhost.CLIENT_TLS_CERT %}
+    # tls client cert auth
+    ssl_client_certificate {{ vhost.CLIENT_TLS_CERT }};
+    ssl_trusted_certificate {{ vhost.CLIENT_TLS_CERT }};
+    ssl_verify_client optional;
+
+    set $certRequest "A";
+
+    if ($request_method = 'OPTIONS') {
+        set $certRequest "${certRequest}B";
+    }
+
+    if ($ssl_client_verify != SUCCESS) {
+        set $certRequest "${certRequest}C";
+    }
+
+    # if NOT OPTIONS and NO success = 403
+    if ($certRequest = 'AC') {
+        return 403;
+        break;
+    }
+{% endif %}
+
+{% if vhost.BASIC_AUTH_FILE and (not vhost.ENABLE_CONDITIONAL_BASIC_AUTH or vhost.ENABLE_CONDITIONAL_BASIC_AUTH == 'NO') %}
+    # basic auth
+    auth_basic "authentication_realm";
+    auth_basic_user_file {{ vhost.BASIC_AUTH_FILE }};
+{% endif %}
+{% if vhost.BASIC_AUTH_FILE and vhost.ENABLE_CONDITIONAL_BASIC_AUTH == 'YES' %}
+    # conditional basic auth
+    auth_basic $authentication_conditional;
+    auth_basic_user_file {{ vhost.BASIC_AUTH_FILE }};
+{% endif %}
+
+    # Deny hidden files (.htaccess, .htpasswd, .DS_Store).
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+    location /errorpages/ {
+        internal;
+        root /etc/nginx/;
+    }
+
+{{ include('server_location_rules.twig') }}
+
+    error_page 403 /errorpages/403.json;
+
+{% if vhost.PROXY_MODE == 'fpm' %}
+{{ include('server_proxy_fpm.twig') }}
+{% elseif vhost.PROXY_MODE == 'standard' %}
+{{ include('server_standard.twig') }}
+{% else %}
+{{ include('server_static.twig') }}
+{% endif %}
+
+}
