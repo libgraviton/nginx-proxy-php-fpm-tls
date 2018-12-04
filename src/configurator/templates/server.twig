@@ -56,6 +56,8 @@ server {
         root /etc/nginx/;
     }
 
+{{ include('server_location_rules.twig') }}
+
     error_page 403 /errorpages/403.json;
 
 {% if vhost.PROXY_MODE == 'fpm' %}

@@ -27,6 +27,9 @@ $_ENV = [
     'FPM_STATIC_WEBROOT' => '/var/www',
     'FPM_STATUS_ALLOWED_NETWORK' => '172.*',
 
+     'RULES_1' => '/consultation#GET',
+     'RULES_2' => '/person/customer#GET',
+
     'VHOST_GRV_SERVERNAME' => 'grv',
      'VHOST_GRV_FPM_PATH' => '/var/www/vendor/graviton/graviton/web/app.php',
      'VHOST_GRV_FPM_UPSTREAM' => 'graviton',
@@ -122,7 +125,10 @@ foreach ($_ENV['VHOSTS'] as $vhostName => $vhostSettings) {
     $envCopy = $_ENV;
     if (isset($envCopy['VHOSTS'])) unset($envCopy['VHOSTS']);
 
-    $_ENV['VHOSTS'][$vhostName] = array_merge($envCopy, $vhostSettings);
+    $fullArray = array_merge($envCopy, $vhostSettings);
+    $fullArray['LOCATION_RULES'] = getLocationRules($fullArray);
+
+    $_ENV['VHOSTS'][$vhostName] = $fullArray;
 }
 
 /***** END DO STUFF PER VHOST ****/
@@ -159,4 +165,18 @@ function getResolvers() {
     }
 
     return implode(' ', $matches[1]);
+}
+
+function getLocationRules($vhostSettings) {
+    $rules = [];
+    foreach ($vhostSettings as $key => $val) {
+        if (substr($key, 0, 6) == 'RULES_') {
+            $parts = explode('#', $val);
+            $rules[] = [
+                'path' => $parts[0],
+                'method' => $parts[1]
+            ];
+        }
+    }
+    return $rules;
 }
