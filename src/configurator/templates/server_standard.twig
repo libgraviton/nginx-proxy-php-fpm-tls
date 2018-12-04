@@ -1,0 +1,16 @@
+location {{ vhost.EXPOSE_PATH }} {
+    try_files $uri $uri/ @upstream;
+}
+
+location @upstream {
+    proxy_pass $upstream_name_{{ vhostName }};
+    proxy_buffers 16 16k;
+    proxy_buffer_size 32k;
+    proxy_ssl_server_name on;
+    proxy_ssl_session_reuse off;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto {{ PROXY_STANDARD_FORWARD_PROTO }};
+    proxy_set_header X-Forwarded-Port {{ PROXY_STANDARD_FORWARD_PORT }};
+}
