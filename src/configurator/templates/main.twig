@@ -12,6 +12,9 @@ http {
     default_type  application/octet-stream;
     server_tokens off;
 
+    {% if SERVER_NAMES_HASH_BUCKET_SIZE != '32' %}server_names_hash_bucket_size {{ SERVER_NAMES_HASH_BUCKET_SIZE }};{% endif %}
+    {% if SERVER_NAMES_HASH_MAX_SIZE != '512' %}server_names_hash_max_size {{ SERVER_NAMES_HASH_MAX_SIZE }};{% endif %}
+
     # resolver configuration
     resolver {{ RESOLVER }} valid={{ RESOLVER_VALID }};
 
