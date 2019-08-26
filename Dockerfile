@@ -1,10 +1,11 @@
 # install our php stuff
-FROM composer:1.8.0
+FROM composer:1.9.0
 COPY src/configurator /app
 RUN cd /app && \
-    composer install --ignore-platform-reqs --no-scripts
+    composer install --ignore-platform-reqs --no-scripts && \
+    composer dump-autoload --optimize --no-dev --classmap-authoritative
 
-FROM nginx:1.15
+FROM nginx:1.17
 ARG TAG
 LABEL TAG=${TAG}
 
