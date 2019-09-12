@@ -1,5 +1,9 @@
 <?php
+
 require __DIR__.'/vendor/autoload.php';
+
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 /**
  * for dev purposes
@@ -140,12 +144,15 @@ if ($_ENV['RESOLVER'] == 'none') {
     $_ENV['RESOLVER'] = getResolvers();
 }
 
+echo 'configuration: '.PHP_EOL;
+print_r($_ENV);
+
 /******* END OF ALL *******/
 
 $environment = array_merge($_ENV, []);
 
-$loader = new Twig_Loader_Filesystem(__DIR__.'/templates');
-$twig = new Twig_Environment($loader, []);
+$loader = new FilesystemLoader(__DIR__.'/templates');
+$twig = new Environment($loader, []);
 
 $mainTemplate = 'main.twig';
 if (is_null($outputFile)) {
@@ -157,6 +164,11 @@ if (is_null($outputFile)) {
 
 function getResolvers() {
     $resolver = file_get_contents('/etc/resolv.conf');
+
+    echo '--------------- RESOLV ------------'.PHP_EOL;
+    echo $resolver;
+    echo '--------------- END RESOLV ------------'.PHP_EOL;
+
     preg_match_all('/nameserver (.*)/', $resolver, $matches);
 
     if (empty($matches[1])) {
