@@ -1,6 +1,6 @@
 server {
-    listen 9080;
-    listen 9443 ssl {% if vhostCounter == 0 %}default_server{% endif %}{% if ENABLE_HTTP2 == "true" %} http2{% endif %};
+    listen 9080{% if vhost.DEFAULT_VHOST == 'true' %} default_server{% endif %};
+    listen 9443 ssl{% if vhost.DEFAULT_VHOST == 'true' %} default_server{% endif %}{% if ENABLE_HTTP2 == "true" %} http2{% endif %};
 
     ssl_certificate {{ SSL_CERT }};
     ssl_certificate_key {{ SSL_CERT_KEY }};

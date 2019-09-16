@@ -41,6 +41,8 @@ ENV SERVERNAME=localhost
 ENV ENABLE_CONDITIONAL_BASIC_AUTH="NO"
 ENV EXPOSE_PATH="/"
 ENV DEFAULT_SERVE="none"
+ENV ROOT_REDIRECT="false"
+ENV DEFAULT_VHOST="false"
 
 # environment.json related
 ENV ENVIRONMENT_JSON_PREFIX="ADMIN_"
@@ -51,7 +53,7 @@ ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    TERM=xterm apt-get install -y apache2-utils curl php-cli && \
+    TERM=xterm apt-get install -y --no-install-recommends busybox apache2-utils curl php-cli && \
     apt-get clean && \
     rm -Rf /usr/share/nginx/html/ && \
     # add www-data to root group (openshift requirement)
