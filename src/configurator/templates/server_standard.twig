@@ -1,3 +1,10 @@
+{# is the proxy root not remote root and shall be redirected to? #}
+{% if vhost.ROOT_REDIRECT == 'true' and vhost.EXPOSE_PATH != '/' %}
+location = / {
+    return 301 $scheme://$host{{ vhost.EXPOSE_PATH }};
+}
+{% endif %}
+
 location {{ vhost.EXPOSE_PATH }} {
     try_files $uri $uri/ @upstream;
 }
