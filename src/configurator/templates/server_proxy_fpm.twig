@@ -42,7 +42,7 @@ location @upstream {
     fastcgi_param HTTPS $https if_not_empty;
     {% if vhost.SERVER_NAME %}fastcgi_param SERVER_NAME {{ vhost.SERVER_NAME }};
     fastcgi_param HTTP_HOST {{ vhost.SERVER_NAME }};
-    {% endif %}
+{% endif %}
     fastcgi_param HTTP_X-FORWARDED-FOR $proxy_add_x_forwarded_for;
     fastcgi_read_timeout 240s;
     fastcgi_keep_conn on;

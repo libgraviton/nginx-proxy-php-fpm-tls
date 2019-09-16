@@ -94,6 +94,7 @@ if (empty($vhosts)) {
 
 /***** DO STUFF PER VHOST *****/
 
+$hasDefaultVhost = false;
 foreach ($_ENV['VHOSTS'] as $vhostName => $vhostSettings) {
     // basic auth?
     if (isset($vhostSettings['BASIC_USERNAME']) && isset($vhostSettings['BASIC_PASSWORD'])) {
@@ -132,7 +133,21 @@ foreach ($_ENV['VHOSTS'] as $vhostName => $vhostSettings) {
     $fullArray = array_merge($envCopy, $vhostSettings);
     $fullArray['LOCATION_RULES'] = getLocationRules($fullArray);
 
+    // is this a default?
+    if (isset($fullArray['DEFAULT_VHOST']) && $fullArray['DEFAULT_VHOST'] == 'true') {
+        $hasDefaultVhost = true;
+    }
+
     $_ENV['VHOSTS'][$vhostName] = $fullArray;
+}
+
+// if no default, set the first
+if (!$hasDefaultVhost) {
+    $i = 0;
+    foreach ($_ENV['VHOSTS'] as $name => $arr) {
+        $_ENV['VHOSTS'][$name]['DEFAULT_VHOST'] = 'true';
+        break;
+    }
 }
 
 /***** END DO STUFF PER VHOST ****/
