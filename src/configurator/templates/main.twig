@@ -18,11 +18,15 @@ http {
     # resolver configuration
     {% if NO_RESOLVER == 'false' %}resolver {{ RESOLVER }} valid={{ RESOLVER_VALID }}{% if RESOLVER_NO_IPV6 == 'true' %} ipv6=off{% endif %};{% endif %}
 
-    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    log_format  main  '$host $remote_addr - $remote_user [$time_local] "$request" '
                       '$status $body_bytes_sent "$http_referer" '
-                      '"$http_user_agent" "$http_x_forwarded_for"';
+                      '"$http_user_agent" "$http_x_forwarded_for" '
+                      'rt="$request_time" uct="$upstream_connect_time" uht="$upstream_header_time" urt="$upstream_response_time"';
 
     access_log  /var/log/nginx/access.log  main;
+    {% if SYSLOG_SERVER != 'false' %}
+    access_log syslog:server={{ SYSLOG_SERVER }},facility={{ SYSLOG_FACILITY }},tag=nginx,severity=info main;
+    {% endif %}
 
     sendfile        on;
     #tcp_nopush     on;
