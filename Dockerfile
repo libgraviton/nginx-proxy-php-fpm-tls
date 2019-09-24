@@ -35,6 +35,8 @@ ENV PROXY_STANDARD_FORWARD_PROTO="\$scheme"
 ENV PROXY_STANDARD_FORWARD_PORT="\$server_port"
 ENV CONDITIONAL_BASIC_AUTH_HEADER="http_x_forwarded_for"
 ENV CONDITIONAL_BASIC_AUTH_REGEX="~172\..*"
+ENV SYSLOG_SERVER="false"
+ENV SYSLOG_FACILITY="local7"
 
 # server (vhost) specific settings
 ENV SERVERNAME=localhost
