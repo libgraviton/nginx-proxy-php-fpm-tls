@@ -25,4 +25,5 @@ echo "{$environmentString}" > $fileName
 
 rm -f $tmpFile
 
-exec "$@"
+export LD_PRELOAD=/usr/lib/runit-docker.so
+exec runsvdir /etc/service

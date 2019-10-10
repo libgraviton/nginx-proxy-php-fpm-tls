@@ -162,6 +162,8 @@ if ($_ENV['RESOLVER'] == 'none') {
 echo 'configuration: '.PHP_EOL;
 print_r($_ENV);
 
+file_put_contents('/var/configuration/configuration.json', json_encode($_ENV));
+
 /******* END OF ALL *******/
 
 $environment = array_merge($_ENV, []);

@@ -71,8 +71,15 @@ http {
     gzip_proxied any; # will enable compression even for proxied requests
 
     # our vhosts
-    {# render our subtemplate for each vhost, will only have one (default) in default scenario #}
 
+{# internal vhost for configuration #}
+    server {
+        listen 9998;
+        server_tokens off;
+        root /var/configuration;
+    }
+
+{# render our subtemplate for each vhost, will only have one (default) in default scenario #}
 {% set vhostCounter = 0 %}
 {% for vhostName, vhost in VHOSTS %}
     {{ include('server.twig') }}

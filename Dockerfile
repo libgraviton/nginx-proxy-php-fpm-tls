@@ -1,5 +1,15 @@
+
+FROM nginx:1.17 AS runit-docker
+
+RUN apt-get update && \
+    apt-get install -y git gcc build-essential && \
+    cd / && \
+    git clone https://github.com/pixers/runit-docker.git && \
+    cd /runit-docker && \
+    make
+
 # install our php stuff
-FROM composer:1.9.0
+FROM composer:1.9.0 AS builder
 COPY src/configurator /app
 RUN cd /app && \
     composer install --ignore-platform-reqs --no-scripts && \
@@ -51,11 +61,9 @@ ENV ENVIRONMENT_JSON_PREFIX="ADMIN_"
 
 ###### END CONFIGURATION
 
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-
 RUN apt-get update && \
     apt-get upgrade -y && \
-    TERM=xterm apt-get install -y --no-install-recommends busybox apache2-utils curl php-cli && \
+    TERM=xterm apt-get install -y --no-install-recommends busybox apache2-utils curl php-cli runit && \
     apt-get clean && \
     rm -Rf /usr/share/nginx/html/ && \
     # add www-data to root group (openshift requirement)
@@ -64,15 +72,21 @@ RUN apt-get update && \
     ln -s /bin/bash /bin/ash && \
     touch /var/log/nginx/access.log && \
     touch /var/log/nginx/error.log && \
-    mkdir /var/www
+    mkdir /var/www && \
+    mkdir /var/configuration
 
 ADD src /
-COPY --from=0 /app /opt/configurator
+
+COPY --from=builder /app /opt/configurator
+COPY --from=runit-docker /runit-docker/runit-docker.so /usr/lib/runit-docker.so
+
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 
 # chmod conf dir so www-data can write to
-RUN chown -R www-data:root /var/www/ /etc/nginx/ /usr/local/bin/run.sh /var/log/nginx/ /var/run/ /var/cache/nginx/ /opt/configurator && \
-    chmod -R go+rwx /var/www/ /etc/nginx/ /usr/local/bin/run.sh /var/log/nginx/ /var/run/ /var/cache/nginx/ && \
+RUN chown -R www-data:root /var/www/ /etc/nginx/ /etc/service/ /usr/local/bin/run.sh /var/log/nginx/ /var/run/ /var/cache/nginx/ /opt/configurator /var/configuration && \
+    chmod -R go+rwx /var/www/ /etc/nginx/ /etc/service/ /usr/local/bin/run.sh /var/log/nginx/ /var/run/ /var/cache/nginx/ /var/configuration && \
     chmod +x /usr/local/bin/run.sh && \
+    chmod +x /etc/service/nginx/run && \
     chmod +x /tini
 
 USER www-data
@@ -80,4 +94,4 @@ USER www-data
 EXPOSE 9080 9443
 
 ENTRYPOINT ["/tini", "--"]
-CMD ["/usr/local/bin/run.sh", "nginx", "-g", "daemon off;"]
+CMD ["/usr/local/bin/run.sh"]
