@@ -17,7 +17,11 @@ location ~ ^/(fpm_status|fpm_ping)$ {
 
     include fastcgi_params;
     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+{% if vhost.FPM_UPSTREAM starts with '/' %}
+    fastcgi_pass unix:{{ vhost.FPM_UPSTREAM }};
+{% else %}
     fastcgi_pass $upstream_name_{{ vhostName }}:9000;
+{% endif %}
 }
 
 location {{ vhost.EXPOSE_PATH }} {
@@ -35,7 +39,11 @@ location @upstream {
     client_max_body_size 0;
     fastcgi_buffers 16 16k;
     fastcgi_buffer_size 32k;
+{% if vhost.FPM_UPSTREAM starts with '/' %}
+    fastcgi_pass unix:{{ vhost.FPM_UPSTREAM }};
+{% else %}
     fastcgi_pass $upstream_name_{{ vhostName }}:9000;
+{% endif %}
     fastcgi_param SCRIPT_FILENAME {{ vhost.FPM_PATH }};
     fastcgi_param SCRIPT_NAME /;
     fastcgi_param QUERY_STRING $args;

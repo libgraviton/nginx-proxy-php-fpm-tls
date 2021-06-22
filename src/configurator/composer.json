@@ -2,7 +2,7 @@
     "name": "nginx/configurator",
     "type": "project",
     "require": {
-        "twig/twig": "^2.5"
+        "twig/twig": "~3"
     },
     "license": "MIT",
     "authors": []

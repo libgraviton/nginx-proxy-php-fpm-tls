@@ -119,7 +119,10 @@ foreach ($_ENV['VHOSTS'] as $vhostName => $vhostSettings) {
     // proxy mode fpm?
     if (isset($vhostSettings['FPM_UPSTREAM']) && isset($vhostSettings['FPM_PATH'])) {
         $vhostSettings['PROXY_MODE'] = 'fpm';
-        $_ENV['GLOBAL_UPSTREAMS'][$vhostName] = $vhostSettings['FPM_UPSTREAM'];
+        // ignore hosts starting with / -> those are sockets
+        if (substr($vhostSettings['FPM_UPSTREAM'], 0, 1) != '/') {
+            $_ENV['GLOBAL_UPSTREAMS'][$vhostName] = $vhostSettings['FPM_UPSTREAM'];
+        }
     }
 
     if (isset($vhostSettings['PROXY_URL'])) {
