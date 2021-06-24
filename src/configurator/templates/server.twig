@@ -1,11 +1,17 @@
+
+######## START {{ vhost.SERVERNAME }} (proxy mode {{ vhost.PROXY_MODE }})
+
 server {
     listen 9080{% if vhost.DEFAULT_VHOST == 'true' %} default_server{% endif %};
+
+{% if NO_SSL != 'true' %}
     listen 9443 ssl{% if vhost.DEFAULT_VHOST == 'true' %} default_server{% endif %}{% if ENABLE_HTTP2 == "true" %} http2{% endif %};
 
     ssl_certificate {{ SSL_CERT }};
     ssl_certificate_key {{ SSL_CERT_KEY }};
     ssl_session_cache shared:SSL:20m;
     ssl_session_timeout 90m;
+{% endif %}
 
     server_name {{ vhost.SERVERNAME }};
     server_tokens off;
@@ -69,3 +75,5 @@ server {
 {% endif %}
 
 }
+
+######## END {{ vhost.SERVERNAME }} (proxy mode {{ vhost.PROXY_MODE }})

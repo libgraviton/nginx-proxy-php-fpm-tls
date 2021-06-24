@@ -1,20 +1,21 @@
 # install our php stuff
-FROM composer:1.9.0
+FROM composer:2
 COPY src/configurator /app
 RUN cd /app && \
     composer install --ignore-platform-reqs --no-scripts && \
     composer dump-autoload --optimize --no-dev --classmap-authoritative
 
-FROM nginx:1.17
+FROM nginx:1.21
 ARG TAG
 LABEL TAG=${TAG}
 
-ENV TINI_VERSION v0.18.0
+ENV TINI_VERSION v0.19.0
 ENV DEBIAN_FRONTEND noninteractive
 
 # global nginx settings
 ENV RESOLVER=none
 ENV NO_RESOLVER=false
+ENV NO_SSL=false
 ENV RESOLVER_VALID=30s
 ENV RESOLVER_NO_IPV6=false
 ENV WORKER_PROCESSES=6
