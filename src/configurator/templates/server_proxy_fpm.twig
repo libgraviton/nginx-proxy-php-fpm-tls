@@ -48,7 +48,11 @@ location @upstream {
     fastcgi_param SCRIPT_NAME /;
     fastcgi_param QUERY_STRING $args;
     fastcgi_param HTTPS $https if_not_empty;
-{% if vhost.SERVER_NAME %}fastcgi_param SERVER_NAME {{ vhost.SERVER_NAME }};
+{% if vhost.UPSTREAM_HOSTNAME is defined %}
+    fastcgi_param SERVER_NAME {{ vhost.UPSTREAM_HOSTNAME }};
+    fastcgi_param HTTP_HOST {{ vhost.UPSTREAM_HOSTNAME }};
+{% elseif vhost.SERVER_NAME %}
+    fastcgi_param SERVER_NAME {{ vhost.SERVER_NAME }};
     fastcgi_param HTTP_HOST {{ vhost.SERVER_NAME }};
 {% endif %}
     fastcgi_param HTTP_X-FORWARDED-FOR $proxy_add_x_forwarded_for;
