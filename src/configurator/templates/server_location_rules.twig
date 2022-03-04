@@ -6,3 +6,9 @@
         }
     }
 {% endfor %}
+
+{% for rule in vhost.LOCATION_SUBPROXIES %}
+    location {{ rule.path }}/ {
+        proxy_pass {{ rule.upstream }}/;
+    }
+{% endfor %}

@@ -135,6 +135,7 @@ foreach ($_ENV['VHOSTS'] as $vhostName => $vhostSettings) {
 
     $fullArray = array_merge($envCopy, $vhostSettings);
     $fullArray['LOCATION_RULES'] = getLocationRules($fullArray);
+    $fullArray['LOCATION_SUBPROXIES'] = getLocationProxies($fullArray);
 
     // is this a default?
     if (isset($fullArray['DEFAULT_VHOST']) && $fullArray['DEFAULT_VHOST'] == 'true') {
@@ -205,6 +206,20 @@ function getLocationRules($vhostSettings) {
             $rules[] = [
                 'path' => $parts[0],
                 'method' => $parts[1]
+            ];
+        }
+    }
+    return $rules;
+}
+
+function getLocationProxies($vhostSettings) {
+    $rules = [];
+    foreach ($vhostSettings as $key => $val) {
+        if (substr($key, 0, 9) == 'SUBPROXY_') {
+            $parts = explode('#', $val);
+            $rules[] = [
+                'path' => $parts[0],
+                'upstream' => $parts[1]
             ];
         }
     }

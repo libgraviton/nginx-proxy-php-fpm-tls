@@ -9,43 +9,45 @@ FROM nginx:1.21
 ARG TAG
 LABEL TAG=${TAG}
 
-ENV TINI_VERSION v0.19.0
-ENV DEBIAN_FRONTEND noninteractive
+ENV TINI_VERSION=v0.19.0 \
+    DEBIAN_FRONTEND=noninteractive
 
 # global nginx settings
-ENV RESOLVER=none
-ENV NO_RESOLVER=false
-ENV NO_SSL=false
-ENV RESOLVER_VALID=30s
-ENV RESOLVER_NO_IPV6=false
-ENV WORKER_PROCESSES=6
-ENV WORKER_CONNECTIONS=1024
-ENV CLIENT_BODY_BUFFER_SIZE=15M
-ENV CLIENT_MAX_BODY_SIZE=15M
-ENV KEEPALIVE_TIMEOUT=200
-ENV SERVER_NAMES_HASH_BUCKET_SIZE=32
-ENV SERVER_NAMES_HASH_MAX_SIZE=512
-ENV SSL_CERT=/certs/fullchain.crt
-ENV SSL_CERT_KEY=/certs/fullchain.key
-ENV FPM_STATIC_WEBROOT=/var/www/web/
-ENV FPM_STATUS_ALLOWED_NETWORK="172.0.0.0/8"
-ENV ENABLE_HTTP2="false"
-ENV GZIP_ENABLED="on"
-ENV GZIP_TYPES="text/css text/plain text/javascript application/javascript application/json application/x-javascript text/xml application/xml application/xml+rss application/xhtml+xml application/x-font-ttf application/x-font-opentype application/vnd.ms-fontobject image/svg+xml image/x-icon application/rss+xml application/atom_xml text/x-gettext-translation"
-ENV PROXY_STANDARD_FORWARD_PROTO="\$scheme"
-ENV PROXY_STANDARD_FORWARD_PORT="\$server_port"
-ENV CONDITIONAL_BASIC_AUTH_HEADER="http_x_forwarded_for"
-ENV CONDITIONAL_BASIC_AUTH_REGEX="~172\..*"
-ENV SYSLOG_SERVER="false"
-ENV SYSLOG_FACILITY="local7"
+ENV RESOLVER=none \
+    NO_RESOLVER=false \
+    NO_SSL=false \
+    RESOLVER_VALID=30s \
+    RESOLVER_NO_IPV6=false \
+    WORKER_PROCESSES=6 \
+    WORKER_CONNECTIONS=1024 \
+    CLIENT_BODY_BUFFER_SIZE=15M \
+    CLIENT_MAX_BODY_SIZE=15M \
+    KEEPALIVE_TIMEOUT=200 \
+    SERVER_NAMES_HASH_BUCKET_SIZE=32 \
+    SERVER_NAMES_HASH_MAX_SIZE=512 \
+    SSL_CERT=/certs/fullchain.crt \
+    SSL_CERT_KEY=/certs/fullchain.key \
+    FPM_STATIC_WEBROOT=/var/www/web/ \
+    FPM_STATUS_ALLOWED_NETWORK="172.0.0.0/8" \
+    FPM_KEEPALIVE_CONN="true" \
+    FPM_READ_TIMEOUT=240s \
+    ENABLE_HTTP2="false" \
+    GZIP_ENABLED="on" \
+    GZIP_TYPES="text/css text/plain text/javascript application/javascript application/json application/x-javascript text/xml application/xml application/xml+rss application/xhtml+xml application/x-font-ttf application/x-font-opentype application/vnd.ms-fontobject image/svg+xml image/x-icon application/rss+xml application/atom_xml text/x-gettext-translation" \
+    PROXY_STANDARD_FORWARD_PROTO="\$scheme" \
+    PROXY_STANDARD_FORWARD_PORT="\$server_port" \
+    CONDITIONAL_BASIC_AUTH_HEADER="http_x_forwarded_for" \
+    CONDITIONAL_BASIC_AUTH_REGEX="~172\..*" \
+    SYSLOG_SERVER="false" \
+    SYSLOG_FACILITY="local7"
 
 # server (vhost) specific settings
-ENV SERVERNAME=localhost
-ENV ENABLE_CONDITIONAL_BASIC_AUTH="NO"
-ENV EXPOSE_PATH="/"
-ENV DEFAULT_SERVE="none"
-ENV ROOT_REDIRECT="false"
-ENV DEFAULT_VHOST="false"
+ENV SERVERNAME=localhost \
+    ENABLE_CONDITIONAL_BASIC_AUTH="NO" \
+    EXPOSE_PATH="/" \
+    DEFAULT_SERVE="none" \
+    ROOT_REDIRECT="false" \
+    DEFAULT_VHOST="false"
 
 # environment.json related
 ENV ENVIRONMENT_JSON_PREFIX="ADMIN_"
