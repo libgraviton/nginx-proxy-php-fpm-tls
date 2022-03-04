@@ -25,4 +25,10 @@ echo "{$environmentString}" > $fileName
 
 rm -f $tmpFile
 
+echo "--------- GENERATED CONFIG ----------------"
+
+cat -n /etc/nginx/nginx.conf
+
+echo "--------- STARTING NGINX ----------------"
+
 exec "$@"
