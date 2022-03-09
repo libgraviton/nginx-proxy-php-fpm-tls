@@ -16,9 +16,9 @@ location @upstream {
     proxy_ssl_server_name on;
     proxy_ssl_session_reuse off;
     proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header Host {% if vhost.UPSTREAM_HOSTNAME is defined %}{{ vhost.UPSTREAM_HOSTNAME }}{% else %}{{ vhost.SERVER_NAME }}{% endif %};
+    proxy_set_header Host {{ vhost.UPSTREAM_HOSTNAME|default('$host') }};
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-{% if vhost.SERVER_NAME %}proxy_set_header X-Forwarded-Host {{ vhost.SERVER_NAME }};
+{% if vhost.SERVERNAME %}proxy_set_header X-Forwarded-Host {{ vhost.SERVERNAME }};
 {% endif %}
     proxy_set_header X-Forwarded-Proto {{ PROXY_STANDARD_FORWARD_PROTO }};
     proxy_set_header X-Forwarded-Port {{ PROXY_STANDARD_FORWARD_PORT }};
