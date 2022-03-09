@@ -24,9 +24,19 @@ http {
                       'rt="$request_time" uct="$upstream_connect_time" uht="$upstream_header_time" urt="$upstream_response_time"';
 
     access_log  /var/log/nginx/access.log  main;
-    {% if SYSLOG_SERVER != 'false' %}
+
+{# mtail should be written? #}
+{% if not MTAIL_PATH is empty %}
+    log_format mtail '$host $remote_addr - $remote_user [$time_local] '
+    '"$request" $status $body_bytes_sent $request_time '
+    '"$http_referer" "$http_user_agent" "$content_type"';
+
+    access_log {{ MTAIL_PATH }} mtail;
+{% endif %}
+
+{% if SYSLOG_SERVER != 'false' %}
     access_log syslog:server={{ SYSLOG_SERVER }},facility={{ SYSLOG_FACILITY }},tag=nginx,severity=info main;
-    {% endif %}
+{% endif %}
 
     sendfile        on;
     #tcp_nopush     on;

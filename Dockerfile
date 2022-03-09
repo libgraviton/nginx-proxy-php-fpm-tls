@@ -38,6 +38,8 @@ ENV RESOLVER=none \
     PROXY_STANDARD_FORWARD_PORT="\$server_port" \
     CONDITIONAL_BASIC_AUTH_HEADER="http_x_forwarded_for" \
     CONDITIONAL_BASIC_AUTH_REGEX="~172\..*" \
+    MTAIL_PATH="" \
+    MTAIL_START="false" \
     SYSLOG_SERVER="false" \
     SYSLOG_FACILITY="local7"
 
@@ -58,7 +60,7 @@ ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    TERM=xterm apt-get install -y --no-install-recommends busybox apache2-utils curl php-cli && \
+    TERM=xterm apt-get install -y --no-install-recommends busybox apache2-utils mtail curl php-cli && \
     apt-get clean && \
     rm -Rf /usr/share/nginx/html/ && \
     # add www-data to root group (openshift requirement)
