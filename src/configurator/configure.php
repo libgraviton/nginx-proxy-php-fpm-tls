@@ -163,9 +163,6 @@ if ($_ENV['RESOLVER'] == 'none') {
     $_ENV['RESOLVER'] = getResolvers();
 }
 
-echo 'configuration: '.PHP_EOL;
-print_r($_ENV);
-
 /******* END OF ALL *******/
 
 $environment = array_merge($_ENV, []);
