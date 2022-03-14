@@ -11,36 +11,23 @@ then
     fi
 fi
 
-# start mtail?
+# start mtail instead?
 if [[ "true" == "${MTAIL_START}" ]]; then
     exec /usr/bin/mtail -logtostderr -port 3093 -progs /etc/nginx/mtail/ -poll_interval 0 -logs "${MTAIL_PATH}"
     exit 0
 fi
 
-/usr/bin/php -d variables_order=E /opt/configurator/configure.php /etc/nginx/nginx.conf
-
 #### generate environment.json file
-fileName="/var/www/environment.json"
-tmpFile="/tmp/environment_variables.log"
-variables=()
+/usr/bin/php -d variables_order=E /opt/configurator/environment-json.php > /var/www/environment.json
 
-# Making a grep on environment variable starting with BAP_ and save it tmp
-env | grep -o "^${ENVIRONMENT_JSON_PREFIX}.*=.*" > $tmpFile
+echo "--------- GENERATED ENVIRONMENT.JSON ----------------"
 
-# LOOP the items, but last without coma for correct json
-while read VARIABLE
-do
-    myvar=${VARIABLE#*=}
-    variables+=("\"${myvar%;*}\":\"${myvar#*;}\"")
-done < $tmpFile
+cat -n /var/www/environment.json
 
-# Config output join by coma
-environmentString=$(IFS=, ; echo "${variables[*]}")
+echo "-----------------------------------------------------"
 
-# Save to file
-echo "{$environmentString}" > $fileName
-
-rm -f $tmpFile
+#### nginx config
+/usr/bin/php -d variables_order=E /opt/configurator/configure.php /etc/nginx/nginx.conf
 
 echo "--------- GENERATED CONFIG ----------------"
 

@@ -55,6 +55,17 @@ location @upstream {
     fastcgi_param SERVER_NAME {{ vhost.SERVER_NAME }};
     fastcgi_param HTTP_HOST {{ vhost.SERVER_NAME }};
 {% endif %}
+
+{% if vhost.FORWARD_PROTO %}
+    fastcgi_param HTTP_X-FORWARDED-PROTO {{ vhost.FORWARD_PROTO }};
+    fastcgi_param HTTP_X_FORWARDED_PROTO {{ vhost.FORWARD_PROTO }};
+{% endif %}
+
+{% if vhost.FORWARD_PORT %}
+    fastcgi_param HTTP_X-FORWARDED-PORT {{ vhost.FORWARD_PORT }};
+    fastcgi_param HTTP_X_FORWARDED_PORT {{ vhost.FORWARD_PORT }};
+{% endif %}
+
     fastcgi_param HTTP_X-FORWARDED-FOR $proxy_add_x_forwarded_for;
     fastcgi_read_timeout {{ vhost.FPM_READ_TIMEOUT }};
 {% if vhost.FPM_KEEPALIVE_CONN == 'true' %}
