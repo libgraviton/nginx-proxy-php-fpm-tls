@@ -1,6 +1,5 @@
-root /var/www;
-
 location / {
+    root /var/www;
     index index.html;
 {% if vhost.DEFAULT_SERVE != "none" %}
     # redirect everything that does not exist to our entrypoint
