@@ -1,13 +1,13 @@
 
 # Some basic cache-control for static files to be sent to the browser
-location ~* \.(?:ico|css|js|gif|jpeg|jpg|png)$ {
-    expires max;
-    add_header Pragma public;
-    add_header Cache-Control "public, must-revalidate, proxy-revalidate";
-    # Admin Css and JS files. Try to load local static files, if not found continue.
-    root {{ FPM_STATIC_WEBROOT }};
-    try_files $uri $uri/;
-}
+{#location ~* \.(?:ico|css|js|gif|jpeg|jpg|png|htm|html)$ {#}
+{#    expires max;#}
+{#    add_header Pragma public;#}
+{#    add_header Cache-Control "public, must-revalidate, proxy-revalidate";#}
+{#    # Admin Css and JS files. Try to load local static files, if not found continue.#}
+{#    root {{ FPM_STATIC_WEBROOT }};#}
+{#    try_files $uri $uri/;#}
+{#}#}
 
 location ~ ^/(fpm_status|fpm_ping)$ {
     access_log off;
@@ -29,9 +29,19 @@ location {{ vhost.EXPOSE_PATH }} {
     add_header 'Access-Control-Allow-Origin' '*';
     client_max_body_size 0;
 
+    {# if expose_path is not /; remove that prefix from the $uri! #}
+{% if vhost.EXPOSE_PATH != '/' %}
+    rewrite ^{{ vhost.EXPOSE_PATH }}(/.*)$ $1 break;
+{% endif %}
+
     # Check if file or directory index file exists, else route to php section
     try_files $uri $uri/ @upstream;
 }
+
+{# if EXPOSE_PATH is not /, assume we have static files to serve as well under / #}
+{% if vhost.EXPOSE_PATH != '/' %}
+{% include 'server_static.twig' %}
+{% endif %}
 
 location @upstream {
     include fastcgi_params;
