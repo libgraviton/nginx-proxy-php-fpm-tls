@@ -27,15 +27,9 @@ location ~ ^/(fpm_status|fpm_ping)$ {
 location {{ vhost.EXPOSE_PATH }} {
     add_header 'Access-Control-Allow-Credentials' 'true';
     add_header 'Access-Control-Allow-Origin' '*';
-    client_max_body_size 0;
-
-    {# if expose_path is not /; remove that prefix from the $uri! #}
-{% if vhost.EXPOSE_PATH != '/' %}
-    rewrite ^{{ vhost.EXPOSE_PATH }}(/.*)$ $1 break;
-{% endif %}
 
     # Check if file or directory index file exists, else route to php section
-    try_files $uri $uri/ @upstream;
+    try_files $uri @upstream;
 }
 
 {# if EXPOSE_PATH is not /, assume we have static files to serve as well under / #}
@@ -45,6 +39,12 @@ location {{ vhost.EXPOSE_PATH }} {
 
 location @upstream {
     include fastcgi_params;
+
+{# if we have a prefix, try to strip that from $request_uri #}
+{% if vhost.EXPOSE_PATH != '/' %}
+    rewrite ^{{ vhost.EXPOSE_PATH }}(/.*)$ $1 break;
+    fastcgi_param REQUEST_URI $uri;
+{% endif %}
 
     client_max_body_size 0;
     fastcgi_buffers 16 16k;
