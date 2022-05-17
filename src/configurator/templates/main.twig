@@ -1,6 +1,11 @@
 worker_processes {{ WORKER_PROCESSES }};
 
-error_log  /var/log/nginx/error.log warn;
+{% if ERROR_LOG_LEVEL != "off" %}
+error_log /var/log/nginx/error.log {{ ERROR_LOG_LEVEL }};
+{% else %}
+error_log /dev/null emerg;
+{% endif %}
+
 pid        /var/run/nginx.pid;
 
 events {
