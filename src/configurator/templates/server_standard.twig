@@ -11,6 +11,7 @@ location {{ vhost.EXPOSE_PATH }} {
 
 location @upstream {
     proxy_pass $upstream_name_{{ vhostName }};
+    proxy_http_version 1.1;
     proxy_buffers 16 16k;
     proxy_buffer_size 32k;
     proxy_ssl_server_name on;
