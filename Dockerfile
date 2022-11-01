@@ -5,15 +5,13 @@ RUN cd /app && \
     composer install --ignore-platform-reqs --no-scripts && \
     composer dump-autoload --optimize --no-dev --classmap-authoritative
 
-FROM nginx:1.21
+FROM nginx:1.23
 ARG TAG
 LABEL TAG=${TAG}
 
-ENV TINI_VERSION=v0.19.0 \
-    DEBIAN_FRONTEND=noninteractive
-
 # global nginx settings
-ENV RESOLVER=none \
+ENV DEBIAN_FRONTEND=noninteractive \
+    RESOLVER=none \
     NO_RESOLVER=false \
     NO_SSL=false \
     RESOLVER_VALID=30s \
@@ -57,11 +55,9 @@ ENV ENVIRONMENT_JSON_PREFIX="ADMIN_"
 
 ###### END CONFIGURATION
 
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-
 RUN apt-get update && \
     apt-get upgrade -y && \
-    TERM=xterm apt-get install -y --no-install-recommends busybox apache2-utils mtail curl php-cli && \
+    TERM=xterm apt-get install -y --no-install-recommends busybox apache2-utils mtail curl php-cli tini && \
     apt-get clean && \
     rm -Rf /usr/share/nginx/html/ && \
     # add www-data to root group (openshift requirement)
@@ -78,12 +74,11 @@ COPY --from=0 /app /opt/configurator
 # chmod conf dir so www-data can write to
 RUN chown -R www-data:root /var/www/ /etc/nginx/ /usr/local/bin/run.sh /var/log/nginx/ /var/run/ /var/cache/nginx/ /opt/configurator && \
     chmod -R go+rwx /var/www/ /etc/nginx/ /usr/local/bin/run.sh /var/log/nginx/ /var/run/ /var/cache/nginx/ && \
-    chmod +x /usr/local/bin/run.sh && \
-    chmod +x /tini
+    chmod +x /usr/local/bin/run.sh
 
 USER www-data
 
 EXPOSE 9080 9443
 
-ENTRYPOINT ["/tini", "--"]
+ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/usr/local/bin/run.sh", "nginx", "-g", "daemon off;"]
