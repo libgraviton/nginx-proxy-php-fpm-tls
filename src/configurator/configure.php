@@ -128,6 +128,15 @@ foreach ($_ENV['VHOSTS'] as $vhostName => $vhostSettings) {
     if (isset($vhostSettings['PROXY_URL'])) {
         $vhostSettings['PROXY_MODE'] = 'standard';
         $_ENV['GLOBAL_UPSTREAMS'][$vhostName] = $vhostSettings['PROXY_URL'];
+
+        try {
+            $uri = \League\Uri\Uri::createFromString($vhostSettings['PROXY_URL']);
+            if (!empty($uri->getHost())) {
+                $vhostSettings['UPSTREAM_HOSTNAME'] = $uri->getHost();
+            }
+        } catch (\Throwable $t) {
+            // ok then..
+        }
     }
 
     $envCopy = $_ENV;
