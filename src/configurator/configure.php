@@ -102,7 +102,7 @@ foreach ($_ENV['VHOSTS'] as $vhostName => $vhostSettings) {
         $passwdFile = '/tmp/nginx_passwd_vhost_'.$vhostName;
         shell_exec(
             sprintf(
-                'htpasswd -bc %s %s %s',
+                'htpasswd -B -bc %s %s %s',
                 escapeshellarg($passwdFile),
                 escapeshellarg($vhostSettings['BASIC_USERNAME']),
                 escapeshellarg($vhostSettings['BASIC_PASSWORD'])

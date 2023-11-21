@@ -5,7 +5,7 @@ RUN cd /app && \
     composer install --ignore-platform-reqs --no-scripts && \
     composer dump-autoload --optimize --no-dev --classmap-authoritative
 
-FROM nginx:1.25.0
+FROM nginx:1.25.3
 ARG TAG
 LABEL TAG=${TAG}
 
