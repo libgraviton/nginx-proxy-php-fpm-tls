@@ -1,0 +1,30 @@
+# install our php stuff
+FROM composer:2
+COPY src/configurator /app
+RUN cd /app && \
+    composer install --ignore-platform-reqs --no-scripts && \
+    composer dump-autoload --optimize --no-dev --classmap-authoritative
+
+FROM nginxinc/nginx-unprivileged:1-alpine
+ARG TAG
+LABEL TAG=${TAG}
+
+USER 0
+
+# environment.json related
+ENV ENVIRONMENT_JSON_PREFIX="ADMIN_"
+
+RUN apk update && \
+    apk add php82
+
+ADD slim-image/src /
+COPY --from=0 /app /opt/configurator
+
+RUN chmod +x /docker-entrypoint.d/grv-startup.sh && \
+    adduser nginx root && \
+    chgrp -R root /usr/share/nginx/html /etc/nginx/conf.d && \
+    chmod -R g+rw /usr/share/nginx/html /etc/nginx/conf.d
+
+EXPOSE 9080
+
+USER 101
